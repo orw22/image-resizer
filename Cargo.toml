@@ -1,0 +1,13 @@
+[package]
+name = "image-resizer"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Oliver Wortley"]
+description = "A simple tool to resize image files in a directory to <= 2MB"
+
+[dependencies]
+image = "0.24.7"
+clap = { version = "4.4.2", features = ["derive"]}
+log = "0.4.20"
+env_logger = "0.10.0"

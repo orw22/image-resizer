@@ -13,6 +13,7 @@ use std::fs;
 *   - given a directory path, this program will resize all images in the directory
 *     that are larger than 2MB to be ~2MB by scaling down their dimensions proportionally
 *     to the diff between their size and the max file size (2MB).
+*   - run .exe: ./image-resizer --path <path_to_directory>
 */
 
 fn main() -> Result<()> {

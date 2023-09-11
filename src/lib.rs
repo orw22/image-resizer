@@ -13,21 +13,14 @@ pub struct Image {
     path: String,
     img: DynamicImage,
     size: u64,
-    needs_resize: bool,
 }
 
 impl Image {
     pub fn new(path: String) -> Result<Self> {
         let img = ImageReader::open(&path).unwrap().decode()?;
         let size = fs::metadata(&path)?.len();
-        let needs_resize = size > MaxFileSize as u64;
 
-        Ok(Self {
-            path,
-            img,
-            size,
-            needs_resize,
-        })
+        Ok(Self { path, img, size })
     }
 
     pub fn resize(&self) -> Result<()> {
@@ -52,6 +45,6 @@ impl Image {
     }
 
     pub fn needs_resize(&self) -> bool {
-        self.needs_resize
+        self.size > MaxFileSize as u64
     }
 }

@@ -39,7 +39,7 @@ impl Image {
             image::imageops::FilterType::Lanczos3,
         );
         buffer.save(&self.path.replace("\\", "/"))?;
-        info!("Resized and saved {}!", self.path);
+        info!("Resized and saved {}", self.path);
 
         Ok(())
     }

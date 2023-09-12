@@ -6,7 +6,11 @@ use crate::{consts::IMAGE_EXTENSIONS, input::Args, logs::setup_logger};
 use clap::Parser;
 use image_resizer::{Image, Result};
 use log::{error, info};
-use std::{fs, io, path::PathBuf};
+use std::{
+    fs,
+    io::{self, Write},
+    path::PathBuf,
+};
 
 /**
 * image-resizer
@@ -26,7 +30,8 @@ fn main() -> Result<()> {
         Some(path) => dir_path = path,
         None => {
             dir_path = PathBuf::from(".");
-            print!("! This will resize all the images in this directory to under 2MB. Are you sure you wish to continue? (y/n) ");
+            print!("!!! This will resize all the images in this directory to under 2MB. Are you sure you wish to continue? (y/n) ");
+            io::stdout().flush().unwrap();
 
             let mut res = String::new();
             io::stdin()
@@ -60,6 +65,7 @@ fn main() -> Result<()> {
                     .as_str(),
             )
         {
+            info!("Skipping {:?} (non-image file or directory)", entry.path());
             continue;
         }
         let file_path = entry.path().to_string_lossy().into_owned();

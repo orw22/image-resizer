@@ -28,7 +28,7 @@ fn main() -> Result<()> {
                     .extension()
                     .unwrap_or_default()
                     .to_str()
-                    .unwrap_or("")
+                    .unwrap_or_default()
                     .to_lowercase()
                     .as_str(),
             )

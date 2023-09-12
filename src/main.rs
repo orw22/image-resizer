@@ -2,15 +2,15 @@ mod consts;
 mod input;
 mod logs;
 
-use crate::{consts::IMAGE_EXTENSIONS, input::Args, logs::setup_logger};
+use crate::{
+    consts::IMAGE_EXTENSIONS,
+    input::{process_args, Args},
+    logs::setup_logger,
+};
 use clap::Parser;
 use image_resizer::{Image, Result};
-use log::{error, info};
-use std::{
-    fs,
-    io::{self, Write},
-    path::PathBuf,
-};
+use log::info;
+use std::{fs, path::PathBuf};
 
 /**
 * image-resizer
@@ -24,55 +24,38 @@ use std::{
 fn main() -> Result<()> {
     setup_logger();
     let args: Args = Args::parse();
-    let dir_path: PathBuf;
+    let dir_path: Option<PathBuf> = process_args(args.path);
 
-    match args.path {
-        Some(path) => dir_path = path,
-        None => {
-            dir_path = PathBuf::from(".");
-            print!("!!! This will resize all the images in this directory to under 2MB. Are you sure you wish to continue? (y/n) ");
-            io::stdout().flush().unwrap();
-
-            let mut res = String::new();
-            io::stdin()
-                .read_line(&mut res)
-                .expect("Failed to read user input");
-
-            match res.trim().to_lowercase().as_str() {
-                "y" => {}
-                "n" => {
-                    info!("Exiting ...");
-                    return Ok(());
+    match dir_path {
+        Some(path) => {
+            for entry in fs::read_dir(path)? {
+                let entry = entry?;
+                if !entry.file_type()?.is_file()
+                    || !IMAGE_EXTENSIONS.contains(
+                        &entry
+                            .path()
+                            .extension()
+                            .unwrap_or_default()
+                            .to_str()
+                            .unwrap_or_default()
+                            .to_lowercase()
+                            .as_str(),
+                    )
+                {
+                    info!("Skipping {:?} (non-image file or directory)", entry.path());
+                    continue;
                 }
-                _ => {
-                    error!("Invalid input. Please enter 'y' for yes or 'n' for no.");
+                let file_path = entry.path().to_string_lossy().into_owned();
+                let image = Image::new(file_path)?;
+                if image.needs_resize() {
+                    image.resize()?;
                 }
             }
         }
+        None => {
+            info!("Exiting...");
+        }
     }
 
-    for entry in fs::read_dir(dir_path)? {
-        let entry = entry?;
-        if !entry.file_type()?.is_file()
-            || !IMAGE_EXTENSIONS.contains(
-                &entry
-                    .path()
-                    .extension()
-                    .unwrap_or_default()
-                    .to_str()
-                    .unwrap_or_default()
-                    .to_lowercase()
-                    .as_str(),
-            )
-        {
-            info!("Skipping {:?} (non-image file or directory)", entry.path());
-            continue;
-        }
-        let file_path = entry.path().to_string_lossy().into_owned();
-        let image = Image::new(file_path)?;
-        if image.needs_resize() {
-            image.resize()?;
-        }
-    }
     return Ok(());
 }

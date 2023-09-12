@@ -5,7 +5,8 @@ mod logs;
 use crate::{consts::IMAGE_EXTENSIONS, input::Args, logs::setup_logger};
 use clap::Parser;
 use image_resizer::{Image, Result};
-use std::fs;
+use log::{error, info};
+use std::{fs, io, path::PathBuf};
 
 /**
 * image-resizer
@@ -18,12 +19,34 @@ use std::fs;
 
 fn main() -> Result<()> {
     setup_logger();
-
-    // TODO: Add warning message (y/n) if no path arg given
-    // "This will resize all the images in this directory to under 2MB. Are you sure you wish to continue? (y/n)"
-
     let args: Args = Args::parse();
-    for entry in fs::read_dir(args.path)? {
+    let dir_path: PathBuf;
+
+    match args.path {
+        Some(path) => dir_path = path,
+        None => {
+            dir_path = PathBuf::from(".");
+            print!("! This will resize all the images in this directory to under 2MB. Are you sure you wish to continue? (y/n) ");
+
+            let mut res = String::new();
+            io::stdin()
+                .read_line(&mut res)
+                .expect("Failed to read user input");
+
+            match res.trim().to_lowercase().as_str() {
+                "y" => {}
+                "n" => {
+                    info!("Exiting ...");
+                    return Ok(());
+                }
+                _ => {
+                    error!("Invalid input. Please enter 'y' for yes or 'n' for no.");
+                }
+            }
+        }
+    }
+
+    for entry in fs::read_dir(dir_path)? {
         let entry = entry?;
         if !entry.file_type()?.is_file()
             || !IMAGE_EXTENSIONS.contains(

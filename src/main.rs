@@ -20,7 +20,11 @@ fn main() -> Result<()> {
     setup_logger();
     let args: Args = Args::parse();
     for entry in fs::read_dir(args.path)? {
-        let file_path = entry?.path().to_string_lossy().into_owned();
+        let entry = entry?;
+        if !entry.file_type()?.is_file() {
+            continue;
+        }
+        let file_path = entry.path().to_string_lossy().into_owned();
         let image = Image::new(file_path)?;
         if image.needs_resize() {
             image.resize()?;

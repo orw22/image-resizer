@@ -18,6 +18,10 @@ use std::fs;
 
 fn main() -> Result<()> {
     setup_logger();
+
+    // TODO: Add warning message (y/n) if no path arg given
+    // "This will resize all the images in this directory to under 2MB. Are you sure you wish to continue? (y/n)"
+
     let args: Args = Args::parse();
     for entry in fs::read_dir(args.path)? {
         let entry = entry?;

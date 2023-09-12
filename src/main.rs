@@ -2,7 +2,7 @@ mod consts;
 mod input;
 mod logs;
 
-use crate::{input::Args, logs::setup_logger};
+use crate::{consts::IMAGE_EXTENSIONS, input::Args, logs::setup_logger};
 use clap::Parser;
 use image_resizer::{Image, Result};
 use std::fs;
@@ -21,7 +21,18 @@ fn main() -> Result<()> {
     let args: Args = Args::parse();
     for entry in fs::read_dir(args.path)? {
         let entry = entry?;
-        if !entry.file_type()?.is_file() {
+        if !entry.file_type()?.is_file()
+            || !IMAGE_EXTENSIONS.contains(
+                &entry
+                    .path()
+                    .extension()
+                    .unwrap_or_default()
+                    .to_str()
+                    .unwrap_or("")
+                    .to_lowercase()
+                    .as_str(),
+            )
+        {
             continue;
         }
         let file_path = entry.path().to_string_lossy().into_owned();

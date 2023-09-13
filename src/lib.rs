@@ -24,7 +24,7 @@ impl Image {
     }
 
     pub fn resize(&self) -> Result<()> {
-        let size_multiplier: f64 = MAX_FILE_SIZE as u64 as f64 / self.size as f64;
+        let size_multiplier = MAX_FILE_SIZE as u64 as f64 / self.size as f64;
         let dimensions = self.img.dimensions();
         let ndimensions = (
             (size_multiplier.sqrt() * (dimensions.0 as f64)) as u32,

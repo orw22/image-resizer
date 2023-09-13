@@ -11,7 +11,7 @@ pub struct Args {
 
 pub fn process_args(path: Option<PathBuf>) -> Option<PathBuf> {
     match path {
-        Some(_path) => return Some(_path),
+        Some(pb) => return Some(pb),
         None => {
             if Confirm::new()
                 .with_prompt("! This will resize all the images in this directory to under 2MB. Are you sure you wish to continue?")

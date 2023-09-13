@@ -1,5 +1,3 @@
-mod consts;
-
 use crate::consts::MAX_FILE_SIZE;
 use image::io::Reader as ImageReader;
 use image::{DynamicImage, GenericImageView};

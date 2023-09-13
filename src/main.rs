@@ -1,14 +1,15 @@
 mod consts;
+mod image;
 mod input;
 mod logs;
 
 use crate::{
     consts::IMAGE_EXTENSIONS,
+    image::{Image, Result},
     input::{process_args, Args},
     logs::setup_logger,
 };
 use clap::Parser;
-use image_resizer::{Image, Result};
 use log::info;
 use std::{fs, path::PathBuf};
 

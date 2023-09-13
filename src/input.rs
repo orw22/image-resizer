@@ -10,9 +10,8 @@ pub struct Args {
 }
 
 pub fn process_args(path: Option<PathBuf>) -> Option<PathBuf> {
-    match path {
-        Some(pb) => return Some(pb),
-        None => {
+    path.map_or_else(
+        || {
             if Confirm::new()
                 .with_prompt("! This will resize all the images in this directory to under 2MB. Are you sure you wish to continue?")
                 .wait_for_newline(true)
@@ -21,8 +20,9 @@ pub fn process_args(path: Option<PathBuf>) -> Option<PathBuf> {
             {
                 Some(PathBuf::from("."))
             } else {
-                return None;
+                None
             }
-        }
-    }
+        },
+        Some,
+    )
 }

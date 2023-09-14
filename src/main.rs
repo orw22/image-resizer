@@ -7,7 +7,7 @@ use crate::{
     consts::IMAGE_EXTENSIONS,
     image::{Image, Result},
     input::{process_args, Args},
-    logs::setup_logger,
+    logs::setup as setup_logger,
 };
 use clap::Parser;
 use log::info;

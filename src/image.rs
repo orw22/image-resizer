@@ -1,6 +1,5 @@
 use crate::consts::MAX_FILE_SIZE;
-use image::io::Reader as ImageReader;
-use image::{DynamicImage, GenericImageView};
+use image::{imageops, io::Reader as ImageReader, DynamicImage, GenericImageView};
 use log::info;
 use std::error::Error;
 use std::fs;
@@ -29,11 +28,11 @@ impl Image {
         );
 
         info!("Resizing {} ...", self.path);
-        let buffer = image::imageops::resize(
+        let buffer = imageops::resize(
             &self.img,
             ndimensions.0,
             ndimensions.1,
-            image::imageops::FilterType::Lanczos3,
+            imageops::FilterType::Lanczos3,
         );
         buffer.save(&self.path.replace("\\", "/"))?;
         info!("Resized and saved {}", self.path);

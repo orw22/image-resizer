@@ -17,7 +17,6 @@ impl Image {
     pub fn new(path: String) -> Result<Self> {
         let img = ImageReader::open(&path).unwrap().decode()?;
         let size = fs::metadata(&path)?.len();
-
         Ok(Self { path, img, size })
     }
 

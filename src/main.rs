@@ -58,5 +58,5 @@ fn main() -> Result<()> {
         }
     }
 
-    return Ok(());
+    Ok(())
 }

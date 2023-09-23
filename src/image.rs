@@ -14,7 +14,7 @@ pub struct Image {
 
 impl Image {
     pub fn new(path: String) -> Result<Self> {
-        let img = ImageReader::open(&path).unwrap().decode()?;
+        let img = ImageReader::open(&path)?.decode()?;
         let size = fs::metadata(&path)?.len();
         Ok(Self { path, img, size })
     }

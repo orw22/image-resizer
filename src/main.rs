@@ -10,7 +10,7 @@ use crate::{
     logs::setup as setup_logger,
 };
 use clap::Parser;
-use log::info;
+use log::{info, warn};
 use std::{fs, path::PathBuf};
 
 /**
@@ -36,10 +36,12 @@ fn main() -> Result<()> {
                         &entry
                             .path()
                             .extension()
-                            .unwrap_or_default()
-                            .to_str()
-                            .unwrap_or_default()
-                            .to_lowercase()
+                            .and_then(|ext| ext.to_str())
+                            .map(|ext| ext.to_lowercase())
+                            .unwrap_or_else(|| {
+                                warn!("Failed to retrieve extension for file: {:?}", entry.path());
+                                String::default()
+                            })
                             .as_str(),
                     )
                 {
